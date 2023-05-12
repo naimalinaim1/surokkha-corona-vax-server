@@ -33,6 +33,18 @@ const run = async () => {
     await client.connect();
 
     const database = client.db("surokkha").collection("users");
+    const adminCollection = client.db("surokkha").collection("admin");
+
+    app.post("/admin", async (req, res) => {
+      const email = req.query?.email;
+      const password = req.query?.password;
+      const query = { email, password };
+      const options = {
+        projection: { _id: 1 },
+      };
+      const result = await adminCollection.findOne(query, options);
+      res.send(result || {});
+    });
 
     // get all user or only nid, birth and passport user
     app.get("/users", async (req, res) => {
