@@ -1,12 +1,11 @@
-import express from "express";
-import cors from "cors";
-import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
-import dotenv from "dotenv";
-dotenv.config();
+const express = require("express");
+const cors = require("cors");
+const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
+require("dotenv").config();
 
 const app = express();
-const port = process.env.PORT || 88;
-const uri = process.env.uri;
+const port = process.env.PORT || 5000;
+const uri = process.env.URI;
 
 // middleware
 app.use(cors());
@@ -25,12 +24,20 @@ const client = new MongoClient(uri, {
     strict: true,
     deprecationErrors: true,
   },
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  maxPoolSize: 10,
 });
 
 const run = async () => {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    client.connect((err) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+    });
 
     const database = client.db("surokkha").collection("users");
     const adminCollection = client.db("surokkha").collection("admin");
